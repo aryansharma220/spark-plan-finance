@@ -1,4 +1,5 @@
 import type { User } from "./users";
+export type { User };
 
 export interface Split {
   person: User;
