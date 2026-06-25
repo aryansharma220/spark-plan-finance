@@ -37,8 +37,15 @@ export function ExpenseForm() {
   const amountValid = amountStr.trim() !== "" && Number.isFinite(amount) && amount > 0;
   const descValid = description.trim().length > 0 && description.trim().length <= 100;
   const totalPct = splits.reduce((a, s) => a + s.percentage, 0);
+  const percentageSplitValid =
+    splits.length === users.length &&
+    splits.every(
+      (split) =>
+        Number.isInteger(split.percentage) && split.percentage >= 0 && split.percentage <= 100,
+    ) &&
+    totalPct === 100;
   const canSubmit =
-    descValid && amountValid && paidBy !== "" && totalPct === 100 && !createExpense.isPending;
+    descValid && amountValid && paidBy !== "" && percentageSplitValid && !createExpense.isPending;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

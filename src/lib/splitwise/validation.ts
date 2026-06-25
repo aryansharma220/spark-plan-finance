@@ -35,7 +35,11 @@ export const createExpenseSchema = z
     const persons = val.splits.map((s) => s.person);
     const unique = new Set(persons);
     if (unique.size !== persons.length) {
-      ctx.addIssue({ code: "custom", path: ["splits"], message: "Each user can appear at most once in splits." });
+      ctx.addIssue({
+        code: "custom",
+        path: ["splits"],
+        message: "Each user can appear at most once in splits.",
+      });
       return;
     }
     for (const u of USERS) {
@@ -45,8 +49,12 @@ export const createExpenseSchema = z
       }
     }
     const total = val.splits.reduce((acc, s) => acc + s.percentage, 0);
-    if (Math.abs(total - 100) > 0.01) {
-      ctx.addIssue({ code: "custom", path: ["splits"], message: "Total percentage must equal 100." });
+    if (total !== 100) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["splits"],
+        message: "Total percentage must equal 100.",
+      });
     }
   });
 

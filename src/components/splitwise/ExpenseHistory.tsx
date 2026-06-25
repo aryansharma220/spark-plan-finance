@@ -18,9 +18,7 @@ export function ExpenseHistory() {
 
   if (expenses.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
-        No expenses yet. Add one to get started.
-      </p>
+      <p className="text-sm text-muted-foreground">No expenses yet. Add one to get started.</p>
     );
   }
 
@@ -36,10 +34,9 @@ export function ExpenseHistory() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="max-h-[32rem] space-y-3 overflow-y-auto pr-2">
       {expenses.map((exp) => {
-        const isDeleting =
-          deleteMutation.isPending && deleteMutation.variables === exp.id;
+        const isDeleting = deleteMutation.isPending && deleteMutation.variables === exp.id;
         return (
           <Card key={exp.id}>
             <CardContent className="space-y-2 p-4">
@@ -49,9 +46,7 @@ export function ExpenseHistory() {
                   <p className="text-xs text-muted-foreground">Paid by {exp.paidBy}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold tabular-nums">
-                    {formatINR(exp.amount)}
-                  </p>
+                  <p className="text-lg font-semibold tabular-nums">{formatINR(exp.amount)}</p>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -65,10 +60,7 @@ export function ExpenseHistory() {
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
                 {exp.splits.map((s) => (
-                  <span
-                    key={s.person}
-                    className="rounded-md bg-secondary px-2 py-1 text-xs"
-                  >
+                  <span key={s.person} className="rounded-md bg-secondary px-2 py-1 text-xs">
                     {s.person} {s.percentage}%
                   </span>
                 ))}

@@ -13,11 +13,7 @@ export class ValidationError extends Error {
 
 function genId(): string {
   // Worker-safe id
-  return (
-    Date.now().toString(36) +
-    "-" +
-    Math.random().toString(36).slice(2, 10)
-  );
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
 }
 
 export function createExpense(rawInput: unknown): Expense {

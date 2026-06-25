@@ -1,5 +1,12 @@
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { createExpense, deleteExpense, fetchBalances, fetchExpenses, fetchUsers, type CreateExpensePayload } from "@/lib/api/splitwise";
+import {
+  createExpense,
+  deleteExpense,
+  fetchBalances,
+  fetchExpenses,
+  fetchUsers,
+  type CreateExpensePayload,
+} from "@/lib/api/splitwise";
 
 export const usersQueryOptions = queryOptions({
   queryKey: ["users"],

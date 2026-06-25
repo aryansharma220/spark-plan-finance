@@ -14,9 +14,15 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Splitwise Lite" },
-      { name: "description", content: "Track shared expenses and settle up with the minimum number of transactions." },
+      {
+        name: "description",
+        content: "Track shared expenses and settle up with the minimum number of transactions.",
+      },
       { property: "og:title", content: "Splitwise Lite" },
-      { property: "og:description", content: "Track shared expenses and settle up with the minimum number of transactions." },
+      {
+        property: "og:description",
+        content: "Track shared expenses and settle up with the minimum number of transactions.",
+      },
     ],
   }),
   loader: ({ context }) => {
@@ -43,9 +49,7 @@ function Index() {
       <header className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-5">
           <h1 className="text-2xl font-bold tracking-tight">Splitwise Lite</h1>
-          <p className="text-sm text-muted-foreground">
-            Amit · Rahul · Sneha
-          </p>
+          <p className="text-sm text-muted-foreground">Amit · Rahul · Sneha</p>
         </div>
       </header>
       <main className="mx-auto grid max-w-6xl items-start gap-6 px-6 py-6 lg:grid-cols-[1fr_1fr]">

@@ -4,40 +4,71 @@ import type { User } from "@/lib/splitwise/types";
 
 export type SplitState = { person: User; percentage: number }[];
 
+function distributeByWeight(total: number, capacities: number[]): number[] {
+  const allocations = capacities.map(() => 0);
+  const capacityTotal = capacities.reduce((sum, capacity) => sum + capacity, 0);
+  const target = Math.min(total, capacityTotal);
+
+  if (target <= 0 || capacityTotal <= 0) return allocations;
+
+  let assigned = 0;
+  for (let i = 0; i < capacities.length; i++) {
+    const share = Math.floor((target * capacities[i]) / capacityTotal);
+    allocations[i] = Math.min(capacities[i], share);
+    assigned += allocations[i];
+  }
+
+  // Top-to-bottom priority for integer rounding leftovers.
+  let remaining = target - assigned;
+  while (remaining > 0) {
+    let changed = false;
+    for (let i = 0; i < allocations.length && remaining > 0; i++) {
+      if (allocations[i] < capacities[i]) {
+        allocations[i] += 1;
+        remaining -= 1;
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+
+  return allocations;
+}
+
 /**
- * Auto-balance per PRD FR-2: when slider at index `idx` changes to `next`,
- * absorb the delta across the OTHER sliders top-to-bottom (by users array order).
- * Each slider clamped to [0, 100], total always exactly 100, never negative.
+ * Auto-balance per PRD FR-2: when one slider changes, spread the delta across
+ * the other sliders proportionally, using top-to-bottom priority for rounding.
+ * Each slider is clamped to [0, 100], total is always exactly 100.
  */
 export function rebalance(current: SplitState, idx: number, next: number): SplitState {
   const result = current.map((s) => ({ ...s }));
   const clampedNext = Math.max(0, Math.min(100, Math.round(next)));
   const oldVal = result[idx].percentage;
-  let delta = clampedNext - oldVal;
+  const delta = clampedNext - oldVal;
   result[idx].percentage = clampedNext;
 
   const others = result.map((_, i) => i).filter((i) => i !== idx);
 
   if (delta > 0) {
-    // others must lose `delta` total, top-to-bottom
-    for (const j of others) {
-      if (delta <= 0) break;
-      const take = Math.min(delta, result[j].percentage);
-      result[j].percentage -= take;
-      delta -= take;
-    }
-    // if not all absorbed (others all 0), clamp changed slider
-    if (delta > 0) result[idx].percentage -= delta;
+    const removals = distributeByWeight(
+      delta,
+      others.map((i) => result[i].percentage),
+    );
+    const absorbed = removals.reduce((sum, removal) => sum + removal, 0);
+    others.forEach((j, i) => {
+      result[j].percentage -= removals[i];
+    });
+    if (absorbed < delta) result[idx].percentage -= delta - absorbed;
   } else if (delta < 0) {
-    let give = -delta;
-    for (const j of others) {
-      if (give <= 0) break;
-      const room = 100 - result[j].percentage;
-      const add = Math.min(give, room);
-      result[j].percentage += add;
-      give -= add;
-    }
-    if (give > 0) result[idx].percentage += give;
+    const additions = distributeByWeight(
+      -delta,
+      others.map((i) => 100 - result[i].percentage),
+    );
+    const absorbed = additions.reduce((sum, addition) => sum + addition, 0);
+    others.forEach((j, i) => {
+      result[j].percentage += additions[i];
+    });
+    if (absorbed < -delta) result[idx].percentage += -delta - absorbed;
   }
 
   // Final integer-sum correction (rounding safety)
@@ -76,6 +107,7 @@ export function PercentageSliderList({ value, onChange }: Props) {
               type="number"
               min={0}
               max={100}
+              step={1}
               value={split.percentage}
               onChange={(e) => {
                 const raw = Number(e.target.value);
