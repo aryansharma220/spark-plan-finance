@@ -1,5 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { formatINR, getParticipantAccent } from "@/lib/splitwise/presentation";
 import type { User } from "@/lib/splitwise/types";
 
 export type SplitState = { person: User; percentage: number }[];
@@ -86,41 +88,60 @@ export function rebalance(current: SplitState, idx: number, next: number): Split
 
 interface Props {
   value: SplitState;
+  amount: number;
   onChange: (next: SplitState) => void;
 }
 
-export function PercentageSliderList({ value, onChange }: Props) {
+export function PercentageSliderList({ value, amount, onChange }: Props) {
   return (
-    <div className="space-y-4">
-      {value.map((split, idx) => (
-        <div key={split.person} className="grid grid-cols-[80px_1fr_72px] items-center gap-4">
-          <span className="text-sm font-medium">{split.person}</span>
-          <Slider
-            min={0}
-            max={100}
-            step={1}
-            value={[split.percentage]}
-            onValueChange={([v]) => onChange(rebalance(value, idx, v ?? 0))}
-          />
-          <div className="flex items-center gap-1">
-            <Input
-              type="number"
-              min={0}
-              max={100}
-              step={1}
-              value={split.percentage}
-              onChange={(e) => {
-                const raw = Number(e.target.value);
-                if (!Number.isNaN(raw)) {
-                  onChange(rebalance(value, idx, raw));
-                }
-              }}
-              className="h-8 w-12 px-1 text-center text-sm tabular-nums"
-            />
-            <span className="text-sm text-muted-foreground">%</span>
+    <div className="space-y-3">
+      {value.map((split, idx) => {
+        const accent = getParticipantAccent(split.person);
+        const splitAmount = (amount * split.percentage) / 100;
+
+        return (
+          <div key={split.person} className={cn("rounded-lg border p-3 shadow-sm", accent.panel)}>
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className={cn("h-2.5 w-2.5 rounded-full", accent.dot)} />
+                <span className="text-sm font-semibold text-slate-900">{split.person}</span>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-semibold tabular-nums text-slate-950">
+                  {split.percentage}%
+                </div>
+                <div className="text-xs tabular-nums text-slate-500">{formatINR(splitAmount)}</div>
+              </div>
+            </div>
+            <div className="grid grid-cols-[1fr_76px] items-center gap-3">
+              <Slider
+                min={0}
+                max={100}
+                step={1}
+                value={[split.percentage]}
+                onValueChange={([v]) => onChange(rebalance(value, idx, v ?? 0))}
+              />
+              <div className="flex items-center justify-end gap-1">
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={split.percentage}
+                  onChange={(e) => {
+                    const raw = Number(e.target.value);
+                    if (!Number.isNaN(raw)) {
+                      onChange(rebalance(value, idx, raw));
+                    }
+                  }}
+                  className="h-8 w-12 bg-white px-1 text-center text-sm tabular-nums"
+                />
+                <span className="text-sm text-slate-500">%</span>
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

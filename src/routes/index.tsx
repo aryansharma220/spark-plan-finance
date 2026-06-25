@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ReceiptText, Scale, Users } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExpenseForm } from "@/components/splitwise/ExpenseForm";
 import { ExpenseHistory } from "@/components/splitwise/ExpenseHistory";
 import { SettlementBoard } from "@/components/splitwise/SettlementBoard";
@@ -45,17 +46,31 @@ function Loading() {
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-5">
-          <h1 className="text-2xl font-bold tracking-tight">Splitwise Lite</h1>
-          <p className="text-sm text-muted-foreground">Amit · Rahul · Sneha</p>
+    <div className="min-h-screen bg-slate-50 text-slate-950">
+      <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-blue-700">
+              <ReceiptText className="h-4 w-4" />
+              Collaborative Expense Tracker
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight">Splitwise Lite</h1>
+          </div>
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-600">
+            <Users className="h-4 w-4 text-slate-500" />
+            Amit <span className="text-slate-300">|</span> Rahul{" "}
+            <span className="text-slate-300">|</span> Sneha
+          </div>
         </div>
       </header>
-      <main className="mx-auto grid max-w-6xl items-start gap-6 px-6 py-6 lg:grid-cols-[1fr_1fr]">
-        <Card>
+      <main className="mx-auto grid max-w-6xl items-start gap-6 px-6 py-6 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]">
+        <Card className="border-slate-200 bg-white shadow-sm">
           <CardHeader>
-            <CardTitle>Add Expense</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <ReceiptText className="h-5 w-5 text-blue-600" />
+              Add Expense
+            </CardTitle>
+            <CardDescription>Record a shared bill and split it by percentage.</CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<Loading />}>
@@ -65,9 +80,13 @@ function Index() {
         </Card>
 
         <div className="space-y-6">
-          <Card>
+          <Card className="border-slate-200 bg-white shadow-sm">
             <CardHeader>
-              <CardTitle>Settlement Board</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Scale className="h-5 w-5 text-emerald-600" />
+                Settlement Board
+              </CardTitle>
+              <CardDescription>Optimized transactions to settle everyone up.</CardDescription>
             </CardHeader>
             <CardContent>
               <Suspense fallback={<Loading />}>
@@ -76,9 +95,13 @@ function Index() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-slate-200 bg-white shadow-sm">
             <CardHeader>
-              <CardTitle>Expense History</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <ReceiptText className="h-5 w-5 text-amber-600" />
+                Expense History
+              </CardTitle>
+              <CardDescription>Newest expenses appear first.</CardDescription>
             </CardHeader>
             <CardContent>
               <Suspense fallback={<Loading />}>
