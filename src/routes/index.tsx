@@ -48,7 +48,7 @@ function Index() {
           </p>
         </div>
       </header>
-      <main className="mx-auto grid max-w-6xl gap-6 px-6 py-6 lg:grid-cols-[1fr_1fr]">
+      <main className="mx-auto grid max-w-6xl items-start gap-6 px-6 py-6 lg:grid-cols-[1fr_1fr]">
         <Card>
           <CardHeader>
             <CardTitle>Add Expense</CardTitle>
