@@ -15,6 +15,12 @@ export const expenseRepository = {
   listNewestFirst(): Expense[] {
     return store.slice().reverse();
   },
+  remove(id: string): boolean {
+    const idx = store.findIndex((e) => e.id === id);
+    if (idx === -1) return false;
+    store.splice(idx, 1);
+    return true;
+  },
   clear(): void {
     store.length = 0;
   },
