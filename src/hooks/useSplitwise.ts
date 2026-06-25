@@ -1,5 +1,5 @@
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { createExpense, fetchBalances, fetchExpenses, fetchUsers, type CreateExpensePayload } from "@/lib/api/splitwise";
+import { createExpense, deleteExpense, fetchBalances, fetchExpenses, fetchUsers, type CreateExpensePayload } from "@/lib/api/splitwise";
 
 export const usersQueryOptions = queryOptions({
   queryKey: ["users"],
@@ -33,6 +33,17 @@ export function useCreateExpense() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateExpensePayload) => createExpense(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["expenses"] });
+      qc.invalidateQueries({ queryKey: ["balances"] });
+    },
+  });
+}
+
+export function useDeleteExpense() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["expenses"] });
       qc.invalidateQueries({ queryKey: ["balances"] });

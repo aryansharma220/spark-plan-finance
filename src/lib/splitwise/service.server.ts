@@ -42,6 +42,23 @@ export function listExpenses(): Expense[] {
   return expenseRepository.listNewestFirst();
 }
 
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
+
+export function deleteExpense(id: string): void {
+  if (!id || typeof id !== "string") {
+    throw new ValidationError("Expense id is required.");
+  }
+  const removed = expenseRepository.remove(id);
+  if (!removed) {
+    throw new NotFoundError("Expense not found.");
+  }
+}
+
 export function getSettlements(): Settlement[] {
   const balances = computeNetBalances(expenseRepository.list());
   return minimizeDebts(balances);

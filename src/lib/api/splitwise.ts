@@ -49,3 +49,14 @@ export async function createExpense(payload: CreateExpensePayload): Promise<ApiS
   }
   return data;
 }
+
+export async function deleteExpense(id: string): Promise<ApiSuccess> {
+  const res = await fetch(`/api/expenses/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  const data = await parseJson<ApiSuccess | ApiError>(res);
+  if (!res.ok || !data.success) {
+    throw new Error((data as ApiError).message || "Failed to delete expense.");
+  }
+  return data;
+}
