@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUsersRouteImport } from './routes/api/users'
+import { Route as ApiExpensesRouteImport } from './routes/api/expenses'
+import { Route as ApiBalancesRouteImport } from './routes/api/balances'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUsersRoute = ApiUsersRouteImport.update({
+  id: '/api/users',
+  path: '/api/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiExpensesRoute = ApiExpensesRouteImport.update({
+  id: '/api/expenses',
+  path: '/api/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBalancesRoute = ApiBalancesRouteImport.update({
+  id: '/api/balances',
+  path: '/api/balances',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/balances': typeof ApiBalancesRoute
+  '/api/expenses': typeof ApiExpensesRoute
+  '/api/users': typeof ApiUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/balances': typeof ApiBalancesRoute
+  '/api/expenses': typeof ApiExpensesRoute
+  '/api/users': typeof ApiUsersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/balances': typeof ApiBalancesRoute
+  '/api/expenses': typeof ApiExpensesRoute
+  '/api/users': typeof ApiUsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/balances' | '/api/expenses' | '/api/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/balances' | '/api/expenses' | '/api/users'
+  id: '__root__' | '/' | '/api/balances' | '/api/expenses' | '/api/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiBalancesRoute: typeof ApiBalancesRoute
+  ApiExpensesRoute: typeof ApiExpensesRoute
+  ApiUsersRoute: typeof ApiUsersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/users': {
+      id: '/api/users'
+      path: '/api/users'
+      fullPath: '/api/users'
+      preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/expenses': {
+      id: '/api/expenses'
+      path: '/api/expenses'
+      fullPath: '/api/expenses'
+      preLoaderRoute: typeof ApiExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/balances': {
+      id: '/api/balances'
+      path: '/api/balances'
+      fullPath: '/api/balances'
+      preLoaderRoute: typeof ApiBalancesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiBalancesRoute: ApiBalancesRoute,
+  ApiExpensesRoute: ApiExpensesRoute,
+  ApiUsersRoute: ApiUsersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
