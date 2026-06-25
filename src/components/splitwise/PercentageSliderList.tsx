@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import type { User } from "@/lib/splitwise/types";
 
@@ -61,7 +62,7 @@ export function PercentageSliderList({ value, onChange }: Props) {
   return (
     <div className="space-y-4">
       {value.map((split, idx) => (
-        <div key={split.person} className="grid grid-cols-[80px_1fr_56px] items-center gap-4">
+        <div key={split.person} className="grid grid-cols-[80px_1fr_72px] items-center gap-4">
           <span className="text-sm font-medium">{split.person}</span>
           <Slider
             min={0}
@@ -70,9 +71,22 @@ export function PercentageSliderList({ value, onChange }: Props) {
             value={[split.percentage]}
             onValueChange={([v]) => onChange(rebalance(value, idx, v ?? 0))}
           />
-          <span className="text-right text-sm tabular-nums text-muted-foreground">
-            {split.percentage}%
-          </span>
+          <div className="flex items-center gap-1">
+            <Input
+              type="number"
+              min={0}
+              max={100}
+              value={split.percentage}
+              onChange={(e) => {
+                const raw = Number(e.target.value);
+                if (!Number.isNaN(raw)) {
+                  onChange(rebalance(value, idx, raw));
+                }
+              }}
+              className="h-8 w-12 px-1 text-center text-sm tabular-nums"
+            />
+            <span className="text-sm text-muted-foreground">%</span>
+          </div>
         </div>
       ))}
     </div>
